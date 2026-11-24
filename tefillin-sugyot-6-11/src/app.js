@@ -45,7 +45,7 @@ function render(){if(!S)return showLogin();updateTop();renderSide();if(S.mode===
 /* ---------- login / home / end ---------- */
 function showLogin(){$("topbar").hidden=true;$("side").hidden=true;var last="";try{last=localStorage.getItem(LSP+"last")||"";}catch(e){}
   $("view").innerHTML='<div class="card login"><div class="brand-mark" style="margin:0 auto 10px;width:60px;height:60px;font-size:2rem">ת</div><h1>לומדה: זמן התפילין ויד שמאל</h1><p class="sub">מנחות לו ע״ב – לז ע״א · סוגיות ו–יא · חזרה עצמית למבחן</p>'+
-  '<p>כתבו את השם שלכם — ההתקדמות תישמר במחשב הזה, ותוכלו לחזור אליה.</p><input id="nm" placeholder="שם פרטי ומשפחה" value="'+esc(last)+'" autocomplete="off"><div class="act" style="justify-content:center"><button class="btn primary" id="enter">כניסה ←</button></div></div>';
+  '<p>כתבו את השם שלכם — ההתקדמות תישמר במחשב הזה, ותוכלו לחזור אליה.</p><input id="nm" placeholder="שם פרטי ומשפחה" value="'+esc(last)+'" autocomplete="off"><div class="act" style="justify-content:center"><button class="btn primary" id="enter">כניסה ←</button><button class="btn fs-btn" type="button"></button></div><p class="sub" style="margin-top:10px;font-size:.85rem">טיפ: מקש F מפעיל ומכבה מסך מלא.</p></div>';fsSync();
   $("enter").onclick=function(){login($("nm").value);};$("nm").onkeydown=function(e){if(e.key==="Enter")login($("nm").value);};}
 function renderHome(){var st=allStats(),inRun=S.run.length&&S.pos<S.run.length;
   var h='<div class="card"><h1>שלום '+esc(S.name)+'! 👋</h1><p class="sub">בחרו סוגיה, או עברו על הכול. לפני כל סוגיה יש כרטיס תזכורת עם לשון הגמרא. אפשר לחזור על הלומדה כמה פעמים — בכל פעם השאלות והתשובות מתערבבות מחדש.</p>';
@@ -185,8 +185,17 @@ document.addEventListener("click",function(ev){var g=ev.target.closest&&ev.targe
 document.addEventListener("keydown",function(ev){if(ev.key==="Escape")closeGloss();if((ev.key==="Enter"||ev.key===" ")&&ev.target.classList&&ev.target.classList.contains("gw")){ev.preventDefault();openGloss(ev.target);}});
 window.addEventListener("scroll",closeGloss,true);window.addEventListener("resize",closeGloss);
 var GHINT='<p class="ghint">👆 לחצו על מילה בארמית (מסומנת בקו נקודות צהוב) — ויופיע התרגום.</p>';
+
+/* ---------- fullscreen ---------- */
+var FSDOC=document.documentElement,FS_OK=!!(FSDOC.requestFullscreen||FSDOC.webkitRequestFullscreen);
+function fsEl(){return document.fullscreenElement||document.webkitFullscreenElement;}
+function toggleFS(){if(!FS_OK){toast("המכשיר הזה לא תומך במסך מלא");return;}try{if(fsEl()){(document.exitFullscreen||document.webkitExitFullscreen).call(document);}else{var p=(FSDOC.requestFullscreen||FSDOC.webkitRequestFullscreen).call(FSDOC);if(p&&p.catch)p.catch(function(){toast("לא ניתן לעבור למסך מלא");});}}catch(e){toast("לא ניתן לעבור למסך מלא");}}
+function fsSync(){var on=!!fsEl();document.querySelectorAll(".fs-btn").forEach(function(b){b.innerHTML=on?"⤡ <span>יציאה ממסך מלא</span>":"⛶ <span>מסך מלא</span>";b.title=on?"יציאה ממסך מלא (F)":"מסך מלא (F)";b.hidden=!FS_OK;});document.body.classList.toggle("is-fs",on);}
+document.addEventListener("fullscreenchange",fsSync);document.addEventListener("webkitfullscreenchange",fsSync);
+document.addEventListener("click",function(ev){var b=ev.target.closest&&ev.target.closest(".fs-btn");if(b){ev.preventDefault();toggleFS();}});
+document.addEventListener("keydown",function(ev){var t=ev.target,tag=t&&t.tagName;if(tag==="INPUT"||tag==="TEXTAREA"||ev.ctrlKey||ev.metaKey||ev.altKey)return;if(ev.key==="f"||ev.key==="F"||ev.key==="כ"){ev.preventDefault();toggleFS();}});
 /* ---------- boot ---------- */
 $("menuBtn").onclick=openMenu;$("scrim").onclick=closeMenu;
-window.LOMDA={applyGloss:applyGloss,get S(){return S;},go:go,startRun:startRun,login:login,render:render,QS:QS};
-showLogin();
+window.LOMDA={toggleFS:toggleFS,applyGloss:applyGloss,get S(){return S;},go:go,startRun:startRun,login:login,render:render,QS:QS};
+showLogin();fsSync();
 })();

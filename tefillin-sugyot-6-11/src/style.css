@@ -147,3 +147,10 @@ textarea:focus,input:focus{outline:none;border-color:var(--navy)}
 .gpop::after{content:"";position:absolute;left:var(--ax,50%);bottom:-8px;width:12px;height:12px;background:#fff;border:2px solid #16a34a;border-top:0;border-left:0;transform:translateX(-50%) rotate(45deg)}
 .gpop.below::after{bottom:auto;top:-8px;transform:translateX(-50%) rotate(-135deg)}
 @keyframes gpin{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* fullscreen */
+.top-fs{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.55);color:#fff;border-radius:99px;padding:3px 12px;font-weight:800;font-size:.85rem;white-space:nowrap}
+.top-fs:hover{background:rgba(255,255,255,.28)}
+.fs-btn[hidden]{display:none}
+body.is-fs .topbar{box-shadow:none}
+@media (max-width:520px){.top-fs span{display:none}.top-fs{padding:2px 9px;font-size:1rem}}
